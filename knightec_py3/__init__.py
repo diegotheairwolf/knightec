@@ -19,15 +19,15 @@ class KNIGHTEC:
     def __init__(self, exp, rpm, sr, length):
 
         self.sensors = ["v1", "v2x", "v2y", "v2z", "t1", "t2", "c1", "c2", "c3"]
-        self.labels = ["Bearing1", "Healthy", "HighSpeed", "Misalignment", "Bearing1+Shaft"]
+        self.labels = ["Bearing", "Healthy", "HighSpeed", "Shaft", "Bearing+Shaft"]
         self.nclasses = len(self.labels)  # number of classes
 
-        if exp not in self.labels:
-            print("wrong experiment name: {}".format(exp))
-            exit(1)
-        if rpm not in ("100", "75", "50"):
-            print("wrong rpm value: {}".format(rpm))
-            exit(1)
+        # if exp not in self.labels:
+        #     print("wrong experiment name: {}".format(exp))
+        #     exit(1)
+        # if rpm not in ("100", "75", "50"):
+        #     print("wrong rpm value: {}".format(rpm))
+        #     exit(1)
         # work directory of all data
         work_dir = os.getcwd()
         rdir = os.path.join(os.path.expanduser(work_dir), 'Datasets/Knightec')
@@ -44,9 +44,12 @@ class KNIGHTEC:
         for idx, line in enumerate(all_lines):
             filename = os.path.split(line)[1]
             l = re.split('%_|__|_|\.|\n', filename)
-            if l[0] == rpm and l[2] == sr:
-                lines.append(l)
-                fpaths.append(filepaths[idx])
+            # if l[0] == rpm and l[2] == sr:
+            # if l[2] == sr:
+            #     lines.append(l)
+            #     fpaths.append(filepaths[idx])
+            lines.append(l)
+            fpaths.append(filepaths[idx])
 
         # adding exp and rpm data for keeping track
         self.exp = exp
@@ -74,8 +77,8 @@ class KNIGHTEC:
         # https://stackoverflow.com/questions/2212643/python-recursive-folder-read
         for root, subdirs, files in os.walk(walk_dir):
             # skip root folder where only readme.txt file exists
-            if root == walk_dir:
-                continue
+            #if root == walk_dir:
+            #    continue
             # print('metadata_file_path = ' + fmeta)
             with open(fmeta, 'ab') as list_file:
                 # for subdir in subdirs:
@@ -107,8 +110,8 @@ class KNIGHTEC:
         self.X_c1 = []
         self.X_c2 = []
         self.X_c3 = []
-        self.X_t1 = []
-        self.X_t2 = []
+        # self.X_t1 = []
+        # self.X_t2 = []
 
         self.X_v1_train = np.zeros((0, self.length))
         self.X_v1_test = np.zeros((0, self.length))
@@ -124,10 +127,10 @@ class KNIGHTEC:
         self.X_c2_test = np.zeros((0, self.length))
         self.X_c3_train = np.zeros((0, self.length))
         self.X_c3_test = np.zeros((0, self.length))
-        self.X_t1_train = np.zeros((0, self.length))
-        self.X_t1_test = np.zeros((0, self.length))
-        self.X_t2_train = np.zeros((0, self.length))
-        self.X_t2_test = np.zeros((0, self.length))
+        # self.X_t1_train = np.zeros((0, self.length))
+        # self.X_t1_test = np.zeros((0, self.length))
+        # self.X_t2_train = np.zeros((0, self.length))
+        # self.X_t2_test = np.zeros((0, self.length))
 
 
         for idx, info in enumerate(tqdm(infos)):
@@ -139,13 +142,13 @@ class KNIGHTEC:
                 copyfile(filepaths[idx], newfile)
 
             # the files did not contain headers. Here we create labels based on documentation
-            labels = ["Bearing1", "Healthy", "HighSpeed", "Misalignment"]
+            labels = ["Bearing", "Healthy", "HighSpeed", "Shaft", "Bearing+Shaft"]
             index_columns_names = ["Cycle"]
             current_columns = ["Current_" + str(i) for i in range(1, 4)]
             temp_columns = ["Temp_" + str(i) for i in range(1, 3)]
-            column_names = ["Cycle", "v1", "v2x", "v2y", "v2z", "t1", "t2", "c1", "c2", "c3"]
+            column_names = ["Cycle1", "Cycle2", "v1", "v2x", "v2y", "v2z", "c1", "c2", "c3"]
 
-            all_data = pd.read_csv(newfile, sep=",", header=None).transpose()
+            all_data = pd.read_csv(newfile, sep=",", header=None, error_bad_lines=False, na_values=["nan"]).transpose()
             all_data.columns = column_names
 
             # self.X.append(time_series)
@@ -178,10 +181,10 @@ class KNIGHTEC:
             self.X_c3_train = np.vstack((self.X_c3_train, all_data["c3"].values[:idx_last].reshape(-1, self.length)[:n_split]))
             self.X_c3_test = np.vstack((self.X_c3_test, all_data["c3"].values[:idx_last].reshape(-1, self.length)[n_split:]))
 
-            self.X_t1_train = np.vstack((self.X_t1_train, all_data["t1"].values[:idx_last].reshape(-1, self.length)[:n_split]))
-            self.X_t1_test = np.vstack((self.X_t1_test, all_data["t1"].values[:idx_last].reshape(-1, self.length)[n_split:]))
-            self.X_t2_train = np.vstack((self.X_t2_train, all_data["t2"].values[:idx_last].reshape(-1, self.length)[:n_split]))
-            self.X_t2_test = np.vstack((self.X_t2_test, all_data["t2"].values[:idx_last].reshape(-1, self.length)[n_split:]))
+            # self.X_t1_train = np.vstack((self.X_t1_train, all_data["t1"].values[:idx_last].reshape(-1, self.length)[:n_split]))
+            # self.X_t1_test = np.vstack((self.X_t1_test, all_data["t1"].values[:idx_last].reshape(-1, self.length)[n_split:]))
+            # self.X_t2_train = np.vstack((self.X_t2_train, all_data["t2"].values[:idx_last].reshape(-1, self.length)[:n_split]))
+            # self.X_t2_test = np.vstack((self.X_t2_test, all_data["t2"].values[:idx_last].reshape(-1, self.length)[n_split:]))
 
             label_index = self.labels.index(info[3])
             self.y_train += [label_index] * n_split
@@ -200,8 +203,8 @@ class KNIGHTEC:
         self.X_c1_train = self.X_c1_train[index]
         self.X_c2_train = self.X_c2_train[index]
         self.X_c3_train = self.X_c3_train[index]
-        self.X_t1_train = self.X_t1_train[index]
-        self.X_t2_train = self.X_t2_train[index]
+        # self.X_t1_train = self.X_t1_train[index]
+        # self.X_t2_train = self.X_t2_train[index]
         self.y_train = tuple(self.y_train[i] for i in index)
 
         # shuffle test samples
@@ -214,7 +217,7 @@ class KNIGHTEC:
         self.X_c1_test = self.X_c1_test[index]
         self.X_c2_test = self.X_c2_test[index]
         self.X_c3_test = self.X_c3_test[index]
-        self.X_t1_test = self.X_t1_test[index]
-        self.X_t2_test = self.X_t2_test[index]
+        # self.X_t1_test = self.X_t1_test[index]
+        # self.X_t2_test = self.X_t2_test[index]
 
         self.y_test = tuple(self.y_test[i] for i in index)

@@ -29,5 +29,9 @@ with open(os.path.join(rdir, filename), 'rb') as f:
   data = pickle.load(f)
 
 
+arrays = [data.X_v2x_train, data.X_v2y_train, data.X_v2z_train]
+X_train = np.stack(arrays, axis=2)
+
+
 
 print("end")

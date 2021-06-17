@@ -14,11 +14,12 @@ import pandas as pd
 from tqdm import tqdm
 
 
+
 class KNIGHTEC:
 
     def __init__(self, exp, rpm, sr, length):
 
-        self.sensors = ["v1", "v2x", "v2y", "v2z", "t1", "t2", "c1", "c2", "c3"]
+        self.sensors = ["v2x", "v2y", "v2z", "c1", "c2", "c3", "v1"]
         self.labels = ["Bearing", "Healthy", "HighSpeed", "Shaft", "Bearing+Shaft"]
         self.nclasses = len(self.labels)  # number of classes
 
@@ -146,7 +147,8 @@ class KNIGHTEC:
             index_columns_names = ["Cycle"]
             current_columns = ["Current_" + str(i) for i in range(1, 4)]
             temp_columns = ["Temp_" + str(i) for i in range(1, 3)]
-            column_names = ["Cycle1", "Cycle2", "v1", "v2x", "v2y", "v2z", "c1", "c2", "c3"]
+            column_names = ["Cycle1", "Cycle2", "v2x", "v2y", "v2z", "c1", "c2", "c3", "v1"]
+
 
             all_data = pd.read_csv(newfile, sep=",", header=None, error_bad_lines=False, na_values=["nan"]).transpose()
             all_data.columns = column_names

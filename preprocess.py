@@ -13,7 +13,7 @@ slice_size = M*M
 
 
 experiment_dict = ["Bearing", "Healthy", "HighSpeed", "Shaft", "Bearing+Shaft"]
-sensor_list = ["v1", "v2x", "v2y", "v2z", "T1", "T2", "c1", "c2", "c3"]
+sensor_list = ["v2x", "v2y", "v2z", "c1", "c2", "c3", "v1"]
 rpm_dict = {100:"100", 75:"75", 50:"50"}
 time_dict = {60:"60"}
 sampling_dict = {5000:"5000"}

@@ -20,7 +20,7 @@ class KNIGHTEC:
     def __init__(self, exp, rpm, sr, length):
 
         self.sensors = ["v2x", "v2y", "v2z", "c1", "c2", "c3", "v1"]
-        self.labels = ["Bearing", "Healthy", "HighSpeed", "Shaft", "Bearing+Shaft"]
+        self.labels = ["Bearing", "Healthy", "HighSpeed", "Shaft", "Shaft+Bearing"]
         self.nclasses = len(self.labels)  # number of classes
 
         # if exp not in self.labels:
@@ -45,12 +45,11 @@ class KNIGHTEC:
         for idx, line in enumerate(all_lines):
             filename = os.path.split(line)[1]
             l = re.split('%_|__|_|\.|\n', filename)
-            # if l[0] == rpm and l[2] == sr:
-            # if l[2] == sr:
-            #     lines.append(l)
-            #     fpaths.append(filepaths[idx])
-            lines.append(l)
-            fpaths.append(filepaths[idx])
+            if (l[0] == rpm or l[0] == rpm+str('�')) and l[2] == sr:
+                lines.append(l)
+                fpaths.append(filepaths[idx])
+            # lines.append(l)
+            # fpaths.append(filepaths[idx])
 
         # adding exp and rpm data for keeping track
         self.exp = exp
@@ -143,14 +142,14 @@ class KNIGHTEC:
                 copyfile(filepaths[idx], newfile)
 
             # the files did not contain headers. Here we create labels based on documentation
-            labels = ["Bearing", "Healthy", "HighSpeed", "Shaft", "Bearing+Shaft"]
+            labels = ["Bearing", "Healthy", "HighSpeed", "Shaft", "Shaft+Bearing"]
             index_columns_names = ["Cycle"]
             current_columns = ["Current_" + str(i) for i in range(1, 4)]
             temp_columns = ["Temp_" + str(i) for i in range(1, 3)]
             column_names = ["Cycle1", "Cycle2", "v2x", "v2y", "v2z", "c1", "c2", "c3", "v1"]
 
 
-            all_data = pd.read_csv(newfile, sep=",", header=None, error_bad_lines=False, na_values=["nan"]).transpose()
+            all_data = pd.read_csv(newfile, sep=",", header=None).transpose()
             all_data.columns = column_names
 
             # self.X.append(time_series)

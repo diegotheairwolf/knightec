@@ -19,7 +19,7 @@ class KNIGHTEC:
 
     def __init__(self, exp, rpm, sr, length):
 
-        self.sensors = ["v2x", "v2y", "v2z", "c1", "c2", "c3", "v1"]
+        self.sensors = ["c1", "c2", "c3", "v1", "v2x", "v2y", "v2z"]
         self.labels = ["Bearing", "Healthy", "HighSpeed", "Shaft", "Shaft+Bearing"]
         self.nclasses = len(self.labels)  # number of classes
 
@@ -100,6 +100,7 @@ class KNIGHTEC:
     def _load_and_slice_data(self, rdir, infos, filepaths):
         self.y_train = []
         self.y_test = []
+        self.y_labels = []
 
         self.files = []
 
@@ -121,6 +122,12 @@ class KNIGHTEC:
         self.X_v2y_test = np.zeros((0, self.length))
         self.X_v2z_train = np.zeros((0, self.length))
         self.X_v2z_test = np.zeros((0, self.length))
+        self.X_v2x_clips = np.zeros((0, self.length))
+        self.X_v2y_clips = np.zeros((0, self.length))
+        self.X_v2z_clips = np.zeros((0, self.length))
+
+
+
         self.X_c1_train = np.zeros((0, self.length))
         self.X_c1_test = np.zeros((0, self.length))
         self.X_c2_train = np.zeros((0, self.length))
@@ -146,7 +153,7 @@ class KNIGHTEC:
             index_columns_names = ["Cycle"]
             current_columns = ["Current_" + str(i) for i in range(1, 4)]
             temp_columns = ["Temp_" + str(i) for i in range(1, 3)]
-            column_names = ["Cycle1", "Cycle2", "v2x", "v2y", "v2z", "c1", "c2", "c3", "v1"]
+            column_names = ["Cycle1", "Cycle2", "c1", "c2", "c3", "v1", "v2x", "v2y", "v2z"]
 
 
             all_data = pd.read_csv(newfile, sep=",", header=None).transpose()
@@ -175,6 +182,10 @@ class KNIGHTEC:
             self.X_v2z_train = np.vstack((self.X_v2z_train, all_data["v2z"].values[:idx_last].reshape(-1, self.length)[:n_split]))
             self.X_v2z_test = np.vstack((self.X_v2z_test, all_data["v2z"].values[:idx_last].reshape(-1, self.length)[n_split:]))
 
+            self.X_v2x_clips = np.vstack((self.X_v2x_clips, all_data["v2x"].values[:idx_last].reshape(-1, self.length)))
+            self.X_v2y_clips = np.vstack((self.X_v2y_clips, all_data["v2y"].values[:idx_last].reshape(-1, self.length)))
+            self.X_v2z_clips = np.vstack((self.X_v2z_clips, all_data["v2z"].values[:idx_last].reshape(-1, self.length)))
+
             self.X_c1_train = np.vstack((self.X_c1_train, all_data["c1"].values[:idx_last].reshape(-1, self.length)[:n_split]))
             self.X_c1_test = np.vstack((self.X_c1_test, all_data["c1"].values[:idx_last].reshape(-1, self.length)[n_split:]))
             self.X_c2_train = np.vstack((self.X_c2_train, all_data["c2"].values[:idx_last].reshape(-1, self.length)[:n_split]))
@@ -190,6 +201,7 @@ class KNIGHTEC:
             label_index = self.labels.index(info[3])
             self.y_train += [label_index] * n_split
             self.y_test += [label_index] * (n - n_split)
+            self.y_labels += [label_index] * n
 
             self.files.append(self.labels[label_index])
 

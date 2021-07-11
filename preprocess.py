@@ -7,13 +7,13 @@ import os
 work_dir = os.getcwd()
 rdir = os.path.join(os.path.expanduser(work_dir), 'Datasets')
 
-M = 16
-ver = 3
+M = 64
+ver = 5
 slice_size = M*M
 
 
 experiment_dict = ["Bearing", "Healthy", "HighSpeed", "Shaft", "Shaft+Bearing"]
-sensor_list = ["v2x", "v2y", "v2z", "c1", "c2", "c3", "v1"]
+sensor_list = ["c1", "c2", "c3", "v1", "v2x", "v2y", "v2z"]
 rpm_dict = {100:"100", 75:"75", 50:"50"}
 time_dict = {60:"60"}
 sampling_dict = {5000:"5000"}

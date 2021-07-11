@@ -17,7 +17,7 @@ work_dir = os.getcwd()
 rdir = os.path.join(os.path.expanduser(work_dir), 'Datasets')
 
 M = 64
-ver = 3
+ver = 4
 slice_size = M*M
 sample_rate = 5000
 T = 1.0 / sample_rate
@@ -25,8 +25,8 @@ N = (2 - 0) * sample_rate
 time = np.linspace(0, 2, N)
 
 # load all data previously pickled (preprocess.py)
-#filename = 'knightec_100_5000_{}.pickle'.format(M)
-filename = 'knightec_{}_ver{}.pickle'.format(M, ver)
+filename = 'knightec_100_5000_{}_ver{}.pickle'.format(M, ver)
+#filename = 'knightec_{}_ver{}.pickle'.format(M, ver)
 with open(os.path.join(rdir, filename), 'rb') as f:
   data = pickle.load(f)
 
